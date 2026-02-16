@@ -4,12 +4,10 @@
 #include "Person.h"
 #include <iostream>
 
-class Group; // forward declaration
+class Group; // предварительное объявление
 
 class Student : public Person {
 private:
-    int recordBookId;
-    static int nextId;
     Group* group;
 
 public:
@@ -19,7 +17,7 @@ public:
     void printInfo() const override;
     void readFromInput() override;
 
-    int getRecordBookId() const;
+    int getRecordBookId() const; // Возвращает id из Person
     Group* getGroup() const;
     void setGroup(Group* group);
 

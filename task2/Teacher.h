@@ -5,7 +5,7 @@
 #include "Discipline.h"
 #include <memory>
 
-class Department; // forward declaration
+class Department; // предварительное объявление
 
 class Teacher : public Person {
 private:

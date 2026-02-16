@@ -80,7 +80,7 @@ void Teacher::resizeDisciplines() {
 
 void Teacher::printInfo() const {
     std::cout << "Преподаватель [Должность: " << position << "] ";
-    Person::printInfo();
+    Person::printInfo(); // Теперь включает ID
     if (department) {
         std::cout << ", Кафедра: " << department->getName();
     }
@@ -96,7 +96,6 @@ void Teacher::readFromInput() {
     std::cout << "Введите должность: ";
     std::getline(std::cin, position);
 }
-
 
 std::string Teacher::getPosition() const {
     return position;

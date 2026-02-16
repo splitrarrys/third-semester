@@ -17,15 +17,21 @@ namespace UniversityTests
     TEST_CLASS(PersonTests) {
     public:
         TEST_METHOD(PersonConstructor_ValidData_Success) {
-            Person person("Иванов Иван Иванович", 25);
-            Assert::AreEqual(std::string("Иванов Иван Иванович"), person.getName());
-            Assert::AreEqual(25, person.getAge());
+            Person person1("Иванов Иван Иванович", 25);
+            Person person2("Петров Петр Петрович", 30);
+            
+            Assert::AreEqual(std::string("Иванов Иван Иванович"), person1.getName());
+            Assert::AreEqual(25, person1.getAge());
+            Assert::IsTrue(person2.getId() > person1.getId()); // ID увеличивается
         }
 
         TEST_METHOD(PersonDefaultConstructor_Success) {
-            Person person;
-            Assert::AreEqual(std::string(""), person.getName());
-            Assert::AreEqual(0, person.getAge());
+            Person person1;
+            Person person2;
+            
+            Assert::AreEqual(std::string(""), person1.getName());
+            Assert::AreEqual(0, person1.getAge());
+            Assert::IsTrue(person2.getId() > person1.getId()); // ID увеличивается
         }
 
         TEST_METHOD(PersonPrintInfo_ValidData_OutputsCorrectInfo) {
@@ -34,9 +40,7 @@ namespace UniversityTests
             os << person;
             
             std::string result = os.str();
-            Assert::IsTrue(result.find("Иванов Иван Иванович") == std::string::npos);
-            Assert::IsTrue(result.find("25") == std::string::npos);
-            // Проверяем что вывод работает
+            Assert::IsTrue(result.find("ID:") != std::string::npos); // Проверяем наличие ID
             Assert::IsFalse(result.empty());
         }
     };
@@ -45,10 +49,12 @@ namespace UniversityTests
     public:
         TEST_METHOD(StudentConstructor_ValidData_Success) {
             Group group("ПИ-101", nullptr);
-            Student student("Смирнов Дмитрий Александрович", 20, &group);
-            Assert::AreEqual(std::string("Смирнов Дмитрий Александрович"), student.getName());
-            Assert::AreEqual(20, student.getAge());
-            Assert::IsTrue(student.getRecordBookId() >= 1000);
+            Student student1("Смирнов Дмитрий Александрович", 20, &group);
+            Student student2("Иванова Мария Сергеевна", 21, &group);
+            
+            Assert::AreEqual(std::string("Смирнов Дмитрий Александрович"), student1.getName());
+            Assert::AreEqual(20, student1.getAge());
+            Assert::IsTrue(student2.getRecordBookId() > student1.getRecordBookId()); // ID увеличивается
         }
 
         TEST_METHOD(StudentDefaultConstructor_Success) {
@@ -59,6 +65,18 @@ namespace UniversityTests
             Assert::AreEqual(0, student1.getAge());
             Assert::IsNull(student1.getGroup());
             Assert::IsTrue(student2.getRecordBookId() > student1.getRecordBookId());
+        }
+
+        TEST_METHOD(StudentPrintInfo_ValidData_OutputsCorrectInfo) {
+            Group group("ПИ-101", nullptr);
+            Student student("Козлова Анна Петровна", 21, &group);
+            std::ostringstream os;
+            
+            os << student;
+            
+            std::string result = os.str();
+            Assert::IsTrue(result.find("Студент") != std::string::npos);
+            Assert::IsTrue(result.find("ID:") != std::string::npos); // Проверяем наличие ID
         }
 
         TEST_METHOD(StudentFindByName_Success) {
@@ -76,6 +94,25 @@ namespace UniversityTests
             Assert::AreEqual(std::string("Волков Сергей Андреевич"), found->getName());
             
             Student* notFound = group.findStudentByName("Несуществующий");
+            Assert::IsNull(notFound);
+        }
+        
+        TEST_METHOD(StudentFindByRecordBookId_Success) {
+            Specialty spec("Тест", "Т-01");
+            Group group("ТЕСТ-101", &spec);
+            
+            Student student1("Волков Сергей Андреевич", 22, &group);
+            Student student2("Лебедева Ольга Игоревна", 21, &group);
+            
+            group.addStudent(student1);
+            group.addStudent(student2);
+            
+            int id1 = student1.getRecordBookId();
+            Student* found = group.findStudentByRecordBookId(id1);
+            Assert::IsNotNull(found);
+            Assert::AreEqual(std::string("Волков Сергей Андреевич"), found->getName());
+            
+            Student* notFound = group.findStudentByRecordBookId(999999);
             Assert::IsNull(notFound);
         }
     };
@@ -105,6 +142,19 @@ namespace UniversityTests
             const Discipline* disciplines = teacher.getDisciplines();
             Assert::AreEqual(std::string("Математический анализ"), disciplines[0].getName());
             Assert::AreEqual(std::string("Алгебра"), disciplines[1].getName());
+        }
+        
+        TEST_METHOD(TeacherPrintInfo_IncludesId_Success) {
+            Department dept("Кафедра физики");
+            Teacher teacher("Козлова Анна Петровна", 42, "Доцент", &dept);
+            std::ostringstream os;
+            
+            teacher.printInfo();
+            os << teacher;
+            
+            std::string result = os.str();
+            Assert::IsTrue(result.find("ID:") != std::string::npos);
+            Assert::IsTrue(result.find("Преподаватель") != std::string::npos);
         }
     };
     
@@ -147,6 +197,25 @@ namespace UniversityTests
             const Department* departments = university.getDepartments();
             Assert::AreEqual(std::string("Кафедра информатики"), departments[0].getName());
             Assert::AreEqual(std::string("Кафедра математики"), departments[1].getName());
+        }
+        
+        TEST_METHOD(UniversityFindStudentById_IntegrationTest) {
+            University university("Тестовый университет");
+            
+            Specialty spec("Тест", "Т-01");
+            Group group("ТЕСТ-101", &spec);
+            
+            university.addSpecialty(spec);
+            university.addGroup(group);
+            
+            Student student("Тестов Студент Тестович", 20, &group);
+            group.addStudent(student);
+            
+            int studentId = student.getRecordBookId();
+            Student* found = university.findStudentByRecordBookId(studentId);
+            
+            Assert::IsNotNull(found);
+            Assert::AreEqual(std::string("Тестов Студент Тестович"), found->getName());
         }
     };
 }

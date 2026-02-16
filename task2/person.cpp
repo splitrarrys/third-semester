@@ -1,9 +1,13 @@
 #include "Person.h"
 
-Person::Person(const std::string& name, int age) : name(name), age(age) {}
+int Person::nextId = 1;
+
+Person::Person() : id(nextId++), name(""), age(0) {}
+
+Person::Person(const std::string& name, int age) : id(nextId++), name(name), age(age) {}
 
 void Person::printInfo() const {
-    std::cout << "Имя: " << name << ", Возраст: " << age;
+    std::cout << "ID: " << id << ", Имя: " << name << ", Возраст: " << age;
 }
 
 void Person::readFromInput() {
@@ -12,6 +16,10 @@ void Person::readFromInput() {
     std::cout << "Введите возраст: ";
     std::cin >> age;
     std::cin.ignore();
+}
+
+int Person::getId() const {
+    return id;
 }
 
 std::string Person::getName() const {

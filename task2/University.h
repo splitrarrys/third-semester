@@ -47,6 +47,7 @@ public:
     void addSpecialty(const Specialty& specialty);
     void addGroup(const Group& group);
 
+    // Основные функции по заданию
     Student* findStudentByRecordBookId(int recordBookId) const;
     Student* findStudentByName(const std::string& name) const;
     

@@ -15,7 +15,7 @@ enum class Command {
 void printMenu() {
     std::cout << "\n=== СИСТЕМА УПРАВЛЕНИЯ УНИВЕРСИТЕТОМ ===\n";
     std::cout << static_cast<int>(Command::ShowStudents) << " - Показать всех студентов\n";
-    std::cout << static_cast<int>(Command::FindStudentById) << " - Найти студента по номеру зачетки\n";
+    std::cout << static_cast<int>(Command::FindStudentById) << " - Найти студента по ID\n";
     std::cout << static_cast<int>(Command::FindStudentByName) << " - Найти студента по ФИО\n";
     std::cout << static_cast<int>(Command::ShowDepartmentDisciplines) << " - Показать дисциплины кафедры\n";
     std::cout << static_cast<int>(Command::ShowGroupTeachers) << " - Показать преподавателей группы\n";
@@ -168,7 +168,7 @@ int main() {
             
             case Command::FindStudentById: {
                 int id;
-                std::cout << "Введите номер зачетной книжки: ";
+                std::cout << "Введите ID студента: ";
                 std::cin >> id;
                 std::cin.ignore();
                 
